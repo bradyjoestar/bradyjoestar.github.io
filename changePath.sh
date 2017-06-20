@@ -9,3 +9,4 @@ mv public/css css/
 mv public/fonts fonts/
 mv public/index.html index.html
 mv public/js  js/
+rm -r public
