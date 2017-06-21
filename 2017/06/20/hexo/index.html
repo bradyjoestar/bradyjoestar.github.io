@@ -165,7 +165,27 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <h2 id="Reference-links"><a href="#Reference-links" class="headerlink" title="Reference links"></a>Reference links</h2>
+                <h2 id="Reference-links"><a href="#Reference-links" class="headerlink" title="Reference links"></a>Reference links</h2><ul>
+<li><p><a href="http://www.jianshu.com/p/4eaddcbe4d12" target="_blank" rel="external">5分钟 搭建免费个人博客</a></p>
+</li>
+<li><p><a href="https://haojen.github.io/2017/05/09/Anisina-%E4%B8%AD%E6%96%87%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" target="_blank" rel="external">Anisina 中文使用教程</a></p>
+</li>
+</ul>
+<h2 id="description"><a href="#description" class="headerlink" title="description"></a>description</h2><p>本博客是基于hexo主题搭建出来的，每次编写marddown文件后通过hexo deploy同步更新到github上，通过<code>bradyjoestar.github.io</code> 访问。</p>
+<p>在搭建过程中主要遇到的问题是git bash的用户切换问题。详细描述如下：</p>
+<p>git bash默认用户为swbsin，而生成博客的用户为bradyjoestar，为了解决这种问题：</p>
+<ul>
+<li>将swbsin的私钥放入到bradyjoestar的github上面。</li>
+<li>每次hexo deploy后生成的public文件复制到到github的<code>bradyjoestar.github.io</code>本地仓库上，并进行上传。</li>
+</ul>
+<h2 id="advantage"><a href="#advantage" class="headerlink" title="advantage"></a>advantage</h2><p>这样部署博客主要有几个优点：</p>
+<ul>
+<li>主题多样，页面简洁。</li>
+<li>markdown文件对与程序员而言非常优雅，无需使用网站自带的浏览器。</li>
+<li>项目托管在github上，无需另外再租服务器。</li>
+</ul>
+<h2 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h2><p><code>hexo</code>的<code>_config.yml</code>配置起来比较复杂，为了简便，可以直接使用Asina的<a href="https://github.com/Haojen/hexo-theme-Anisina/blob/master/_config.yml" target="_blank" rel="external">yml文件</a></p>
+
                 <hr>
                 
 
@@ -190,7 +210,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference-links"><span class="toc-text">Reference links</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference-links"><span class="toc-text">Reference links</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#description"><span class="toc-text">description</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#advantage"><span class="toc-text">advantage</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tips"><span class="toc-text">tips</span></a></li></ol>
                 </div>
             </div>
         </div>
