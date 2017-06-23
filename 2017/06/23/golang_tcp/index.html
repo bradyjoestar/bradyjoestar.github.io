@@ -192,44 +192,19 @@
 <li>server与client之间只存在一条连接。可能会出现这样的情况：服务器需要向客户端推送一些数据。而客户端建立的连接正处于block状态。</li>
 <li>server与client建立的连接是短连接。</li>
 </ul>
-<p>存在两种解决方法</p>
+<p>存在的解决方法如下</p>
 <ul>
 <li>在client的实现上增加 server模块，监听来自于服务器的请求，并进行处理。</li>
 <li>在server与client另外新建立一条长连接。通过setKeepLive来保活。</li>
+<li>使用channel，保证客户端的协程不会死掉。</li>
 </ul>
-<h1 id="golang-udp"><a href="#golang-udp" class="headerlink" title="golang udp"></a>golang udp</h1><h1 id="golang-kcp"><a href="#golang-kcp" class="headerlink" title="golang kcp"></a>golang kcp</h1><p><img src="mahua-logo.jpg" alt="mahua"></p>
-<p>##MaHua是什么?<br>一个在线编辑markdown文档的编辑器</p>
-<p>向Mac下优秀的markdown编辑器mou致敬</p>
-<p>##MaHua有哪些功能？</p>
-<ul>
-<li>方便的<code>导入导出</code>功能<ul>
-<li>直接把一个markdown的文本文件拖放到当前这个页面就可以了</li>
-<li>导出为一个html格式的文件，样式一点也不会丢失</li>
+<h1 id="golang-udp"><a href="#golang-udp" class="headerlink" title="golang udp"></a>golang udp</h1><p>udp 的通信无需创建lister，直接进行数据的传输。</p>
+<h2 id="udp-server"><a href="#udp-server" class="headerlink" title="udp server"></a>udp server</h2><figure class="highlight golang"><table><tr><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"net"</span></div><div class="line">)</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// 创建监听</span></div><div class="line">	socket, err := net.ListenUDP(<span class="string">"udp4"</span>, &amp;net.UDPAddr&#123;</div><div class="line">		IP:   net.IPv4(<span class="number">127</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>),</div><div class="line">		Port: <span class="number">23452</span>,</div><div class="line">	&#125;)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Println(<span class="string">"监听失败!"</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	fmt.Println(<span class="string">"监听成功"</span>)</div><div class="line">	<span class="keyword">defer</span> socket.Close()</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		<span class="comment">// 读取数据</span></div><div class="line">		data := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">4096</span>)</div><div class="line">		read, remoteAddr, err := socket.ReadFromUDP(data)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			fmt.Println(<span class="string">"读取数据失败!"</span>, err)</div><div class="line">			<span class="keyword">continue</span></div><div class="line">		&#125;</div><div class="line">		fmt.Println(read, remoteAddr)</div><div class="line">		fmt.Printf(<span class="string">"%s\n\n"</span>, data)</div><div class="line">		<span class="comment">// 发送数据</span></div><div class="line">		senddata := []<span class="keyword">byte</span>(<span class="string">"hello client!"</span>)</div><div class="line">		_, err = socket.WriteToUDP(senddata, remoteAddr)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">			fmt.Println(<span class="string">"发送数据失败!"</span>, err)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="udp-client"><a href="#udp-client" class="headerlink" title="udp client"></a>udp client</h2><figure class="highlight golang"><table><tr><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"net"</span></div><div class="line">)</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// 创建连接</span></div><div class="line">	socket, err := net.DialUDP(<span class="string">"udp4"</span>, <span class="literal">nil</span>, &amp;net.UDPAddr&#123;</div><div class="line">		IP:   net.IPv4(<span class="number">127</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>),</div><div class="line">		Port: <span class="number">23452</span>,</div><div class="line">	&#125;)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Println(<span class="string">"连接失败!"</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> socket.Close()</div><div class="line">	<span class="comment">// 发送数据</span></div><div class="line">	senddata := []<span class="keyword">byte</span>(<span class="string">"hello server!"</span>)</div><div class="line">	_, err = socket.Write(senddata)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Println(<span class="string">"发送数据失败!"</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// 接收数据</span></div><div class="line">	data := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">4096</span>)</div><div class="line">	read, remoteAddr, err := socket.ReadFromUDP(data)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Println(<span class="string">"读取数据失败!"</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	fmt.Println(read, remoteAddr)</div><div class="line">	fmt.Printf(<span class="string">"%s\n"</span>, data)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的server和client实现比较简单了，基本上没有什么要说的了。</p>
+<h1 id="golang-kcp"><a href="#golang-kcp" class="headerlink" title="golang kcp"></a>golang kcp</h1><h1 id="reference-links"><a href="#reference-links" class="headerlink" title="reference links"></a>reference links</h1><ul>
+<li><a href="http://www.jb51.net/article/89075.htm" target="_blank" rel="external">http://www.jb51.net/article/89075.htm</a></li>
 </ul>
-</li>
-<li>编辑和预览<code>同步滚动</code>，所见即所得（右上角设置）</li>
-<li><code>VIM快捷键</code>支持，方便vim党们快速的操作 （右上角设置）</li>
-<li>强大的<code>自定义CSS</code>功能，方便定制自己的展示</li>
-<li>有数量也有质量的<code>主题</code>,编辑器和预览区域</li>
-<li>完美兼容<code>Github</code>的markdown语法</li>
-<li>预览区域<code>代码高亮</code></li>
-<li>所有选项自动记忆</li>
-</ul>
-<p>##有问题反馈<br>在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流</p>
-<ul>
-<li>邮件(dev.hubo#gmail.com, 把#换成@)</li>
-<li>QQ: 287759234</li>
-<li>weibo: <a href="http://weibo.com/ihubo" target="_blank" rel="external">@草依山</a></li>
-<li>twitter: <a href="http://twitter.com/ihubo" target="_blank" rel="external">@ihubo</a></li>
-</ul>
-<p>##捐助开发者<br>在兴趣的驱动下,写一个<code>免费</code>的东西，有欣喜，也还有汗水，希望你喜欢我的作品，同时也能支持一下。<br>当然，有钱捧个钱场（右上角的爱心标志，支持支付宝和PayPal捐助），没钱捧个人场，谢谢各位。</p>
-<p>##感激<br>感谢以下的项目,排名不分先后</p>
-<ul>
-<li><a href="http://mouapp.com/" target="_blank" rel="external">mou</a> </li>
-<li><a href="http://ace.ajax.org/" target="_blank" rel="external">ace</a></li>
-<li><a href="http://jquery.com" target="_blank" rel="external">jquery</a></li>
-</ul>
-<p>##关于作者<br><figure class="highlight javascript"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> ihubo = &#123;</div><div class="line">  <span class="attr">nickName</span>  : <span class="string">"草依山"</span>,</div><div class="line">  <span class="attr">site</span> : <span class="string">"http://jser.me"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 
                 <hr>
                 
@@ -255,7 +230,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-网络编程"><span class="toc-text">golang 网络编程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-tcp"><span class="toc-text">golang tcp</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#单connection的tcp-server与client-端"><span class="toc-text">单connection的tcp server与client 端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#tcp-server"><span class="toc-text">tcp server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tcp-client"><span class="toc-text">tcp client</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#net-utils"><span class="toc-text">net utils</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#双connection的tcp-server与client-端"><span class="toc-text">双connection的tcp server与client 端</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-udp"><span class="toc-text">golang udp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-kcp"><span class="toc-text">golang kcp</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-网络编程"><span class="toc-text">golang 网络编程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-tcp"><span class="toc-text">golang tcp</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#单connection的tcp-server与client-端"><span class="toc-text">单connection的tcp server与client 端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#tcp-server"><span class="toc-text">tcp server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tcp-client"><span class="toc-text">tcp client</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#net-utils"><span class="toc-text">net utils</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#双connection的tcp-server与client-端"><span class="toc-text">双connection的tcp server与client 端</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-udp"><span class="toc-text">golang udp</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#udp-server"><span class="toc-text">udp server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#udp-client"><span class="toc-text">udp client</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-kcp"><span class="toc-text">golang kcp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reference-links"><span class="toc-text">reference links</span></a></li></ol>
                 </div>
             </div>
         </div>
