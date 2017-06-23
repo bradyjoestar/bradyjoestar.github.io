@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="wenbin在 Github 上的个人博客">
+    <meta name="keyword" content="null">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="BradyJoestar" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        golang network 基础｜BradyJoestar&#39;s blog
+        
+    </title>
+
+    <link rel="canonical" href="http://bradyjoestar.github.io/2017/06/23/golang_tcp/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('http://chuantu.biz/t5/112/1497973707x3080560687.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    BradyJoestar
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>golang network 基础</h1>
+                    
+                    <span class="meta">
+                         作者 Brady joestar
+                        <span>
+                          日期 2017-06-23
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            golang network 基础
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <p>go-shadowsocks是一个非常好的学习golang网络编程的例子。在本篇博文中重点<br>阐述golang网络通信几个各种不同协议下服务端和客户端的实现。<br>网络通信协议主要有以下两种外加一种增加的协议</p>
+<ul>
+<li>golang tcp</li>
+<li>golang upd</li>
+<li>golang kcp：在upd上进行增强的协议，KCP 是一个快速可靠协议，能以比 TCP浪费10%-20%的带宽的代价，换取平均延迟降低 30%-40%，且最大延迟降低三倍的传输效果。</li>
+</ul>
+<p>golang的一大优势就是多核、并行、网络编程。通过goroutine与channel可以很方便地协程，协程比线程更轻量级，占用资源更小，可以更好地适用与并行计算。</p>
+<p>下面对这三种分别进行说明。</p>
+<h1 id="golang-tcp"><a href="#golang-tcp" class="headerlink" title="golang tcp"></a>golang tcp</h1><p>下面根据两种golang tcp server和client的例子进行说明</p>
+<h2 id="单connection的tcp-server与client-端"><a href="#单connection的tcp-server与client-端" class="headerlink" title="单connection的tcp server与client 端"></a>单connection的tcp server与client 端</h2><h3 id="tcp-server"><a href="#tcp-server" class="headerlink" title="tcp server"></a>tcp server</h3><figure class="highlight golang"><table><tr><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">    <span class="string">"net"</span></div><div class="line">    <span class="string">"fmt"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="comment">// tcp 监听并接受端口</span></div><div class="line">    l, err := net.Listen(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:65535"</span>)</div><div class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">        fmt.Println(err)</div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">    <span class="comment">//最后关闭</span></div><div class="line">    <span class="keyword">defer</span> l.Close()</div><div class="line">    fmt.Println(<span class="string">"tcp服务端开始监听65535端口..."</span>)</div><div class="line">    <span class="comment">// 使用循环一直接受连接</span></div><div class="line">    <span class="keyword">for</span> &#123;</div><div class="line">        fmt.Println(<span class="string">"loop test"</span>)</div><div class="line">        <span class="comment">//Listener.Accept() 接受连接</span></div><div class="line">        <span class="comment">//conn 是双方的。和长度为1的channel有些类似。</span></div><div class="line">        c, err := l.Accept()</div><div class="line">        <span class="keyword">if</span> err!= <span class="literal">nil</span> &#123;</div><div class="line">            <span class="keyword">return</span></div><div class="line">        &#125;</div><div class="line">        <span class="comment">//处理tcp请求</span></div><div class="line">        <span class="keyword">go</span> handleConnection(c)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleConnection</span><span class="params">(c net.Conn)</span></span> &#123;</div><div class="line">    <span class="comment">//一些代码逻辑...</span></div><div class="line">    fmt.Println(<span class="string">"tcp服务端开始处理请求..."</span>)</div><div class="line">    <span class="comment">//读取</span></div><div class="line">    buffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</div><div class="line">    <span class="comment">//如果客户端无数据则会阻塞，服务端阻塞，直到等待客户端传递数据。</span></div><div class="line">    c.Read(buffer)</div><div class="line"></div><div class="line">    <span class="comment">//服务端成功从阻塞状态走出，读取客户端的数据，并根据自身的接口输出buffer</span></div><div class="line">    c.Write(buffer)</div><div class="line">    fmt.Println(<span class="string">"tcp服务端开始处理请求完毕..."</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="tcp-client"><a href="#tcp-client" class="headerlink" title="tcp client"></a>tcp client</h3><figure class="highlight golang"><table><tr><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">    <span class="string">"net"</span></div><div class="line">    <span class="string">"fmt"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</div><div class="line">    <span class="comment">//net.dial 拨号 获取tcp连接</span></div><div class="line">    conn, err := net.Dial(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:65535"</span>)</div><div class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">        fmt.Println(err)</div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">    fmt.Println(<span class="string">"获取127.0.0.1：65535的tcp连接成功..."</span>)</div><div class="line"></div><div class="line">    <span class="keyword">defer</span> conn.Close()</div><div class="line">    <span class="comment">//客户端这里不用使用协程。使用协程的话main函数退出，所有go 协程全部死掉。</span></div><div class="line"></div><div class="line">    conn.Write([]<span class="keyword">byte</span>(<span class="string">"echo data to server ,then to client!!!"</span>))</div><div class="line">    fmt.Println(<span class="string">"test server"</span>)</div><div class="line">    <span class="comment">//读取到buffer</span></div><div class="line">    buffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</div><div class="line">    <span class="comment">//如果服务端没有把数据传递过来，那么客户端阻塞，直到服务端向其中写入了数据。</span></div><div class="line">    conn.Read(buffer)</div><div class="line">    fmt.Println(<span class="keyword">string</span>(buffer))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="net-utils"><a href="#net-utils" class="headerlink" title="net utils"></a>net utils</h3><ul>
+<li>net.Dial(客户端调用，拨号)</li>
+<li>net.Listen（服务端调用，监听接口）</li>
+<li>TCPListener.Accept（服务端调用，接受，创建连接。）</li>
+<li>conn.Read（客户端服务端都会调用，读取conn中数据）</li>
+<li>conn.write（客户端服务端都会调用，读取conn中数据）</li>
+</ul>
+<p>其它net 提供的函数可以查看<a href="http://studygolang.com/pkgdoc" target="_blank" rel="external">API</a></p>
+<p>为了能够让服务端处理多个连接，使用了协程来处理来自多个客户端的连接请求。</p>
+<p>客户端的实现没有用到协程。</p>
+<p>另外tcp server的for函数非常有趣，在上面的测试例子中不会无限打印<code>loop test</code>,说明应该是被阻塞了。只有每次有新连接过来才会放开。</p>
+<h2 id="双connection的tcp-server与client-端"><a href="#双connection的tcp-server与client-端" class="headerlink" title="双connection的tcp server与client 端"></a>双connection的tcp server与client 端</h2><h1 id="golang-udp"><a href="#golang-udp" class="headerlink" title="golang udp"></a>golang udp</h1><h1 id="golang-kcp"><a href="#golang-kcp" class="headerlink" title="golang kcp"></a>golang kcp</h1><p><img src="mahua-logo.jpg" alt="mahua"></p>
+<p>##MaHua是什么?<br>一个在线编辑markdown文档的编辑器</p>
+<p>向Mac下优秀的markdown编辑器mou致敬</p>
+<p>##MaHua有哪些功能？</p>
+<ul>
+<li>方便的<code>导入导出</code>功能<ul>
+<li>直接把一个markdown的文本文件拖放到当前这个页面就可以了</li>
+<li>导出为一个html格式的文件，样式一点也不会丢失</li>
+</ul>
+</li>
+<li>编辑和预览<code>同步滚动</code>，所见即所得（右上角设置）</li>
+<li><code>VIM快捷键</code>支持，方便vim党们快速的操作 （右上角设置）</li>
+<li>强大的<code>自定义CSS</code>功能，方便定制自己的展示</li>
+<li>有数量也有质量的<code>主题</code>,编辑器和预览区域</li>
+<li>完美兼容<code>Github</code>的markdown语法</li>
+<li>预览区域<code>代码高亮</code></li>
+<li>所有选项自动记忆</li>
+</ul>
+<p>##有问题反馈<br>在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流</p>
+<ul>
+<li>邮件(dev.hubo#gmail.com, 把#换成@)</li>
+<li>QQ: 287759234</li>
+<li>weibo: <a href="http://weibo.com/ihubo" target="_blank" rel="external">@草依山</a></li>
+<li>twitter: <a href="http://twitter.com/ihubo" target="_blank" rel="external">@ihubo</a></li>
+</ul>
+<p>##捐助开发者<br>在兴趣的驱动下,写一个<code>免费</code>的东西，有欣喜，也还有汗水，希望你喜欢我的作品，同时也能支持一下。<br>当然，有钱捧个钱场（右上角的爱心标志，支持支付宝和PayPal捐助），没钱捧个人场，谢谢各位。</p>
+<p>##感激<br>感谢以下的项目,排名不分先后</p>
+<ul>
+<li><a href="http://mouapp.com/" target="_blank" rel="external">mou</a> </li>
+<li><a href="http://ace.ajax.org/" target="_blank" rel="external">ace</a></li>
+<li><a href="http://jquery.com" target="_blank" rel="external">jquery</a></li>
+</ul>
+<p>##关于作者<br><figure class="highlight javascript"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> ihubo = &#123;</div><div class="line">  <span class="attr">nickName</span>  : <span class="string">"草依山"</span>,</div><div class="line">  <span class="attr">site</span> : <span class="string">"http://jser.me"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/06/20/hexo/" data-toggle="tooltip" data-placement="top"
+                           title="快速搭建个人博客网站">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+
+                <!--加入新的评论系统-->
+                
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-tcp"><span class="toc-text">golang tcp</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#单connection的tcp-server与client-端"><span class="toc-text">单connection的tcp server与client 端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#tcp-server"><span class="toc-text">tcp server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tcp-client"><span class="toc-text">tcp client</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#net-utils"><span class="toc-text">net utils</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#双connection的tcp-server与client-端"><span class="toc-text">双connection的tcp server与client 端</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-udp"><span class="toc-text">golang udp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#golang-kcp"><span class="toc-text">golang kcp</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; BradyJoestar 2017
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://bradyjoestar.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="http://upload.jianshu.io/users/upload_avatars/136678/fb3212b75dad.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/144/h/144">
+</body>
+
+</html>
