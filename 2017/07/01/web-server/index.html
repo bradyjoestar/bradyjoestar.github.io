@@ -22,7 +22,7 @@
         
     </title>
 
-    <link rel="canonical" href="http://bradyjoestar.github.io/2017/07/01/webserver-application/">
+    <link rel="canonical" href="http://bradyjoestar.github.io/2017/07/01/web-server/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -165,16 +165,47 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                
+                <hr>
+<h2 id="webserver-架构阐述"><a href="#webserver-架构阐述" class="headerlink" title="webserver 架构阐述"></a>webserver 架构阐述</h2><h1 id="webserver-架构阐述-1"><a href="#webserver-架构阐述-1" class="headerlink" title="webserver 架构阐述"></a>webserver 架构阐述</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>web应用服务器是互联网时代最为重要之一的底层支持。它处理相应的应用访问请求，并为前端提供相应的展示数据。<br>不同的web应用服务器实现性能不同，大型网站服务器可以每秒处理几万到几十万的应用请求，中小型网站服务器可能会因为每秒几千次请求停机。<br>从架构的角度上而言，web-server的升级是一个迭代的过程，只有现在的应用服务器无法满足网站的访问量，才会在此之上进行优化。对于一名好的架构师而言，落地和防灾、可扩展是优先需要考虑的相关事宜。</p>
+<h2 id="web应用的开发"><a href="#web应用的开发" class="headerlink" title="web应用的开发"></a>web应用的开发</h2><p>首先要说的是软件开发是一个确定性的事件，<strong>有章可循，有理可溯</strong>，这是入门级程序员和高级程序员的区别之处。<br>我们以这种思路自顶向下去分析解决问题。</p>
+<p>以主流的JavaEE为例，传统的应用开发两个较为核心的工作内容是：</p>
+<ul>
+<li>对具体的业务进行抽象，形成系统的应用模型，并制定好相关的接口与数据结构。（此后接口与数据结构处于不断的update的状态）</li>
+<li>以某种框架为主，结合数据库与其它的中间件、开源库等，搭建好项目框架。</li>
+</ul>
+<p>这可能会涉及持续化集成、自动化测试、测试驱动开发概念。</p>
+<p>在这之后，可能还会存在的工作是：</p>
+<ul>
+<li>业务上的编码。基于项目框架实现相应的业务模块。</li>
+</ul>
+<p>在这个过程中，可能会涉及封装、基类、工具类、反射、泛型的概念。</p>
+<p>从上面可以看出，软件开发是一件团队合作的事情。应该由<strong>不同的人员去从事不同的事情</strong>。传统项目的分工基本如下：</p>
+<ul>
+<li>业务模型的建立（架构师）</li>
+<li>框架的搭建与接口、数据结构的定义（架构师与高级软件工程师结合）</li>
+<li>类的封装、基类的编写、架构的分层、持续化集成工具，自动化测试流程。（架构师与高级软件工程师结合，高级工程师为主）</li>
+<li>理解业务，增删改查。（入门级软件工程师）</li>
+</ul>
+<p>目前比较主流的web应用框架是以spring-boot为主的微服务框架。对于上面说的三个事情而言，重要的是<strong>把其中任何一件事情当作一个工程去做，赋予一个合适的时间周期。</strong> 这部分内容在预研过程中非常关键，前期未考虑到的因素后期再修改代价可能为<strong>指数级</strong>。</p>
+<p>以spring-boot为主，结合mysql搭建web应用服务器的例子github上有很多，在这里不再赘述。</p>
+<h2 id="我的应用响应时间很慢，可能出现了什么问题"><a href="#我的应用响应时间很慢，可能出现了什么问题" class="headerlink" title="我的应用响应时间很慢，可能出现了什么问题?"></a>我的应用响应时间很慢，可能出现了什么问题?</h2><p>从客户端传递到服务器，响应时间由以下三个部分组成：</p>
+<ul>
+<li>数据传输时间。包括客户端送达服务器的数据传输时间t1和服务器送达客户端的数据时间t3.</li>
+<li>请求处理时间。具体指服务器接收请求后，处理所消耗的时间t2.</li>
+<li>前端显示时间。具体指客户端获取数据后，对数据进行渲染和展示的时间t4。</li>
+</ul>
+<p>当出现应用响应时间过高这个问题时，对于相关人员，首先需要做的是：</p>
+<p>对上面三个部分进行测试，分析它们分别所消耗的时间，然后再对此进行优化。<strong>做到有的放矢，不要四处放枪</strong>。</p>
+<h2 id="web应用的部署"><a href="#web应用的部署" class="headerlink" title="web应用的部署"></a>web应用的部署</h2><h3 id="单web应用服务器"><a href="#单web应用服务器" class="headerlink" title="单web应用服务器"></a>单web应用服务器</h3><p>讲一下springmvc和springmvc下的多线程web服务模型。</p>
+<h3 id="多web应用服务器"><a href="#多web应用服务器" class="headerlink" title="多web应用服务器"></a>多web应用服务器</h3><p>多个web应用服务器  一个dns服务器 负载均衡</p>
+<h2 id="web应用的数据缓存"><a href="#web应用的数据缓存" class="headerlink" title="web应用的数据缓存"></a>web应用的数据缓存</h2><p>reddis</p>
+<h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p>分布式文件存储<br>新技术</p>
+<p>cookie<br>session可以说一下</p>
+
                 <hr>
                 
 
                 <ul class="pager">
-                    
-                    <li class="previous">
-                        <a href="/2017/07/01/webserver/" data-toggle="tooltip" data-placement="top"
-                           title="">&larr; Previous Post</a>
-                    </li>
                     
                     
                     <li class="next">
@@ -195,7 +226,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#webserver-架构阐述"><span class="toc-text">webserver 架构阐述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#webserver-架构阐述-1"><span class="toc-text">webserver 架构阐述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的开发"><span class="toc-text">web应用的开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的应用响应时间很慢，可能出现了什么问题"><span class="toc-text">我的应用响应时间很慢，可能出现了什么问题?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的部署"><span class="toc-text">web应用的部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单web应用服务器"><span class="toc-text">单web应用服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多web应用服务器"><span class="toc-text">多web应用服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的数据缓存"><span class="toc-text">web应用的数据缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多"><span class="toc-text">更多</span></a></li></ol>
                 </div>
             </div>
         </div>
