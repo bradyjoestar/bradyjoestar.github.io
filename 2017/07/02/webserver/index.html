@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="wenbin在 Github 上的个人博客">
+    <meta name="keyword" content="null">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="BradyJoestar" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        webserver 架构阐述｜BradyJoestar&#39;s blog
+        
+    </title>
+
+    <link rel="canonical" href="http://bradyjoestar.github.io/2017/07/02/webserver/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('http://chuantu.biz/t5/112/1497973707x3080560687.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    BradyJoestar
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>webserver 架构阐述</h1>
+                    
+                    <span class="meta">
+                         作者 Brady joestar
+                        <span>
+                          日期 2017-07-02
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            webserver 架构阐述
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="webserver-架构阐述"><a href="#webserver-架构阐述" class="headerlink" title="webserver 架构阐述"></a>webserver 架构阐述</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>web应用服务器是互联网时代最为重要之一的底层支持。它处理相应的应用访问请求，并为前端提供相应的展示数据。<br>不同的web应用服务器实现性能不同，大型网站服务器可以每秒处理几万到几十万的应用请求，中小型网站服务器可能会因为每秒几千次请求停机。<br>从架构的角度上而言，web-server的升级是一个迭代的过程，只有现在的应用服务器无法满足网站的访问量，才会在此之上进行优化。对于一名好的架构师而言，落地和防灾、可扩展是优先需要考虑的相关事宜。</p>
+<h2 id="web应用的开发"><a href="#web应用的开发" class="headerlink" title="web应用的开发"></a>web应用的开发</h2><p>首先要说的是软件开发是一个确定性的事件，<strong>有章可循，有理可溯</strong>，任何现象都是可以被解释的，这是入门级程序员和高级程序员的区别之处。<br>我们以这种思路自顶向下去分析解决问题。</p>
+<p>以主流的JavaEE为例，传统的应用开发两个较为核心的工作内容是：</p>
+<ul>
+<li>对具体的业务进行抽象，形成系统的应用模型，并制定好相关的接口与数据结构。（此后接口与数据结构处于不断的update的状态）</li>
+<li>以某种框架为主，结合数据库与其它的中间件、开源库等，搭建好项目框架。</li>
+</ul>
+<p>这可能会涉及持续化集成、自动化测试、测试驱动开发概念。</p>
+<p>在这之后，可能还会存在的工作是：</p>
+<ul>
+<li>业务上的编码。基于项目框架实现相应的业务模块。</li>
+</ul>
+<p>在这个过程中，可能会涉及封装、基类、工具类、反射、泛型的概念。</p>
+<p>从上面可以看出，软件开发是一件团队合作的事情。应该由<strong>不同的人员去从事不同的事情</strong>。传统项目的分工基本如下（基于个人主观猜测）：</p>
+<ul>
+<li>业务模型的建立（架构师）</li>
+<li>框架的搭建与接口、数据结构的定义（架构师与高级软件工程师结合）</li>
+<li>类的封装、基类的编写、架构的分层、持续化集成工具，自动化测试流程。（架构师与高级软件工程师结合，高级工程师为主）</li>
+<li>理解业务，增删改查。（入门级软件工程师）</li>
+</ul>
+<p>目前比较主流的web应用框架是以spring-boot为主的微服务框架。对于上面说的三个事情而言，重要的是<strong>把其中任何一件事情当作一个工程去做，赋予一个合适的时间周期。</strong> 这部分内容在预研过程中非常关键，前期未考虑到的因素后期再修改代价可能为<strong>指数级</strong>。</p>
+<p>以spring-boot为主，结合mysql搭建web应用服务器的例子github上有很多，在这里不再赘述。</p>
+<h2 id="我的应用响应时间很慢，可能出现了什么问题"><a href="#我的应用响应时间很慢，可能出现了什么问题" class="headerlink" title="我的应用响应时间很慢，可能出现了什么问题?"></a>我的应用响应时间很慢，可能出现了什么问题?</h2><p>从客户端传递到服务器，响应时间由以下三个部分组成：</p>
+<ul>
+<li>数据传输时间。包括客户端送达服务器的数据传输时间t1和服务器送达客户端的数据时间t3.</li>
+<li>请求处理时间。具体指服务器接收请求后，处理所消耗的时间t2.</li>
+<li>前端显示时间。具体指客户端获取数据后，对数据进行渲染和展示的时间t4。</li>
+</ul>
+<p>当出现应用响应时间过高这个问题时，对于相关人员，首先需要做的是：</p>
+<p>对上面三个部分进行测试，分析它们分别所消耗的时间，然后再对此进行优化。<strong>做到有的放矢，不要四处放枪</strong>。</p>
+<h2 id="web应用的部署-servlet"><a href="#web应用的部署-servlet" class="headerlink" title="web应用的部署 servlet"></a>web应用的部署 servlet</h2><p>当我们开发完应用程序之后，该如何进行应用的部署呢？怎样的部署才能够保证服务器的处理时间较短？<br>下面我们讨论单个tomcatweb应用服务器和多个tomcatweb应用服务器。</p>
+<h3 id="单tomcat-web应用服务器"><a href="#单tomcat-web应用服务器" class="headerlink" title="单tomcat web应用服务器"></a>单tomcat web应用服务器</h3><p>通过spring boot 创建web应用有两种方式：war包与jar包。在本文中以war包为例。</p>
+<p>servlet解析web请求过程：</p>
+<ul>
+<li>web客户向Servlet容器发出HTTP请求;</li>
+<li>Servlet容器解析web的HTTP请求.</li>
+<li>Servlet容器创建一个HttpRequest对象,在这个对象中封装了http请求信息;</li>
+<li>Servlet容器创建一个HttpResponse对象;</li>
+<li>Servlet容器（如果访问的该servlet不是在服务器启动时创建的，则先创建servlet实例并调用init()方法初始化对象）调用HttpServlet的service()方法,把HttpRequest和HttpResponse对象为service方法的参数传给HttpServlet对象;</li>
+<li>HttpServlet调用HttpRequest的有关方法,获取HTTP请求信息;</li>
+<li>HttpServlet调用HttpResponse的有关方法,生成响应数据;</li>
+<li>Servlet容器把HttpServlet的响应结果传给web客户.</li>
+</ul>
+<p>tomcat作为servlet容器的一种，管理着部署的多个web应用。tomcat运行架构图如下：</p>
+<p><img src="http://chuantu.biz/t5/123/1498975887x2728329095.png" alt="tomcat运行架构图"></p>
+<p>从上图中可以看出：</p>
+<ul>
+<li>tomcat维护着一个线程池，一个servlet池。</li>
+<li>每一个线程池里面有多个线程，每一个servlet池中有多个servlet。需要注意的是每个web应用只对应与一个servlet</li>
+<li>如果有多个请求到来时，tomcat会根据请求数量创建多个线程，这多个线程同时调用同一个servlet实例的service（）方法，实现并发处理。而不是创建多个servlet实例。</li>
+</ul>
+<p>所以由于每个web应用只创建了一个servlet实例，所以需要线程安全问题。（即servlet中包含静态变量和成员变量的时候会出现线程安全的问题。应该使用局部变量。）</p>
+<p><a href="http://www.cnblogs.com/chanshuyi/p/5052426.html" target="_blank" rel="external">tomcat 并发模型</a></p>
+<h3 id="多tomcat-web应用服务器"><a href="#多tomcat-web应用服务器" class="headerlink" title="多tomcat web应用服务器"></a>多tomcat web应用服务器</h3><p>从单个tomcat运行web应用中可以看出：</p>
+<p>java web通过封装servlet屏蔽了服务细节，使web开发人员专注与业务逻辑的实现。这是j2ee能在web开发中有一定地位的原因。<br>然而，由于servlet的创建和tomcat 多线程的并发处理全部交由tomcat来做，在这一个层次程序员无法做太多的事情，只能对tomcat和jvm进行调优。<br>万幸的是cpu不是系统性能的瓶颈。但是目前有很多的游戏已经使用goroutine来实现了。因为golang的协程可以开上万个，非常适合多线程的处理。</p>
+<p>在一些大型网站中，对这部分性能调优的解决方案有：</p>
+<ul>
+<li>提高机器的cpu计算能力，使在同一台机器上能够运行尽量多的tomcat线程。</li>
+<li>堆机器，通过提高tomcat的个数进而提高servlet的个数和运行的线程数。</li>
+</ul>
+<p>第二种方案就引入了多tomcat web应用服务器。它的思路是：</p>
+<ul>
+<li>在多台机器上搭建tomcat，让这些tomcat运行同一个web应用。</li>
+<li>搭建DNS服务器，每当有用户请求过来时，首先经由DNS服务器分配给相应的tomcat服务器。</li>
+<li>tomcat服务器处理http请求。<br>在这里出现了一个问题，如何让DNS服务器把请求平均分配给合适的tomcat服务器？<br>这里引入了LoadBalance的概念。通过负载均衡均匀地分配请求。</li>
+</ul>
+<p>在云计算尚未出现时，负载均衡及容器的维护往往由内部的技术部自行实现，在云计算时代，由于K8S和Docker的出现，使这类问题解决更为容易。<br>K8S的弹性伸缩，把容器进行拷贝复制，并自动负责负载均衡，可以大大简化其流程。</p>
+<p>ps：在K8S上运行的多个tomcat容器是相同的拷贝。</p>
+<p>淘宝的例子<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">开发发布流程</div><div class="line"> 开发机、项目环境都是一台机器，进行开发。</div><div class="line"></div><div class="line"> 开发完成之后，发布上线，会有发布机器将代码拉出来，然后分批发布（部署的时候需要把机器关掉，由其他机器继续提供服务）。同步到每一台服务器。（持续集成）</div><div class="line"></div><div class="line">用户访问时会</div><div class="line"></div><div class="line">有专门的服务器进行流量控制和分配，将该用户的请求转移到某一台服务器上面，由该服务器提供服务。（负载均衡）</div></pre></td></tr></table></figure></p>
+<h2 id="web应用的数据缓存"><a href="#web应用的数据缓存" class="headerlink" title="web应用的数据缓存"></a>web应用的数据缓存</h2><p>从传统的意义上讲，系统的性能瓶颈并不存在于cpu的计算能力，而在于I/O。<br>所以大型网站架构上通常在思考如何降低I/O的时间。</p>
+<p>最常用的降低I/O时间是使用reddis和memcached做缓存，关于这块前辈的经验摘引如下:<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">作者：匿名用户</div><div class="line">链接：https://www.zhihu.com/question/27738066/answer/45475986</div><div class="line">来源：知乎</div><div class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</div><div class="line"></div><div class="line">1.首先明确是不是一定要上缓存，当前架构的瓶颈在哪里，若瓶颈真是数据库操作上，再继续往下看。</div><div class="line">2.明确memcached和redis的区别，到底要使用哪个。前者终究是个缓存，不可能永久保存数据（LRU机制），支持分布式，后者除了缓存的同时也支持把数据持久化到磁盘等，redis要自己去实现分布式缓存（貌似最新版本的已集成），自己去实现一致性hash。因为不知道你们的应用场景，不好说一定要用memcache还是redis，说不定用mongodb会更好，比如在存储日志方面。</div><div class="line">3.缓存量大但又不常变化的数据，比如评论。</div><div class="line">4.读DB前，先读缓存，如果有直接返回，如果没有再读DB，然后写入缓存层并返回。</div><div class="line">5.考虑是否需要主从，读写分离，考虑是否分布式部署，考虑是否后续水平伸缩。</div><div class="line">6.想要一劳永逸，后续维护和扩展方便，那就将现有的代码架构优化，按你说的替换数据库组件需要改动大量代码，说明当前架构存在问题。可以利用现有的一些框架，比如SpringMVC，将你的应用层和业务层和数据库层解耦。再上缓存之前把这些做好。</div><div class="line">7.把读取缓存等操作做成服务组件，对业务层提供服务，业务层对应用层提供服务。</div><div class="line">8.保留原始数据库组件，优化成服务组件，方便后续业务层灵活调用缓存或者是数据库。</div><div class="line">9.不建议一次性全量上缓存，最开始不动核心业务，可以将边缘业务先换成缓存组件，一步步换至核心业务。</div><div class="line">10.刷新内存，以memcached为例，新增，修改和删除操作，一般采用lazy load的策略，即新增时只写入数据库，并不会马上更新Memcached，而是等到再次读取时才会加载到Memcached中，修改和删除操作也是更新 数据库，然后将Memcached中的数据标记为失效，等待下次读取时再加载。</div></pre></td></tr></table></figure></p>
+<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><p>安全内容博大精深，关于安全方面相关的一些基本的认知链接如下：</p>
+<p><a href="http://www.cnblogs.com/ansn001/p/5649301.html" target="_blank" rel="external">web application security</a></p>
+<p>另外，如果对于java 而言，可以使用一个apache的安全框架<br><a href="http://shiro.apache.org/" target="_blank" rel="external">shiro</a></p>
+<h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p>此外还有一些诸如分布式文件存储、加快服务器脚本运算速度、页面组件分离等都是提高服务器响应的方法。</p>
+<h2 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h2><p>在web开发中，cookie和seesion经常用到。接下来进行简单的说明。cookie和session主要是用来保存数据及状态。</p>
+<p>cookie 和session 的区别：</p>
+<ul>
+<li>cookie数据存放在客户的浏览器上，session数据放在服务器上。</li>
+<li>cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗考虑到安全应当使用session。</li>
+<li>session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能考虑到减轻服务器性能方面，应当使用COOKIE。</li>
+<li>单个cookie保存的数据不能超过4K，很多浏览器都限制一个站点最多保存20个cookie。</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>将登陆信息等重要信息存放为SESSION</li>
+<li>其他信息如果需要保留，可以放在COOKIE中</li>
+</ul>
+<p>cookie和session可以解决跨页面传递数据的问题。<br>前端跨页面传递数据是一个比较繁琐的问题，依赖于浏览器的架构和实现。cookie和session是一种通用的解决方案。</p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/07/01/golang/" data-toggle="tooltip" data-placement="top"
+                           title="">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+
+                <!--加入新的评论系统-->
+                
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#webserver-架构阐述"><span class="toc-text">webserver 架构阐述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的开发"><span class="toc-text">web应用的开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的应用响应时间很慢，可能出现了什么问题"><span class="toc-text">我的应用响应时间很慢，可能出现了什么问题?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的部署-servlet"><span class="toc-text">web应用的部署 servlet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单tomcat-web应用服务器"><span class="toc-text">单tomcat web应用服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多tomcat-web应用服务器"><span class="toc-text">多tomcat web应用服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的数据缓存"><span class="toc-text">web应用的数据缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安全"><span class="toc-text">安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多"><span class="toc-text">更多</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tips"><span class="toc-text">tips</span></a></li></ol></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/bradyjoestar">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; BradyJoestar 2017
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://bradyjoestar.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="http://upload.jianshu.io/users/upload_avatars/136678/fb3212b75dad.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/144/h/144">
+</body>
+
+</html>
