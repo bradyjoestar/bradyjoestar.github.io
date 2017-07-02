@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        BradyJoestar&#39;s blog
+        golang runtime与feature｜BradyJoestar&#39;s blog
         
     </title>
 
-    <link rel="canonical" href="http://bradyjoestar.github.io/archives/">
+    <link rel="canonical" href="http://bradyjoestar.github.io/2017/07/02/golang-runtime/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -43,7 +43,7 @@
 <!-- hack iOS CSS :active style -->
 <body ontouchstart="" class="animated fadeIn">
 <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "false" data-istags="false
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
 " data-ishome = "false" >
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -115,156 +115,145 @@
 </script>
 
 <!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg">
+
+
 <style>
-    .intro-header .site-heading {
-        margin: 50px;
+    
+    header.intro-header {
+        background-image: url('http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg')
     }
+
+    
 </style>
 
-<!-- Page Header -->
 <header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading text-center">
-                    <h1>archives</h1>
-                    <span class="subheading">可以根据归档日期检索所有文件</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>golang runtime与feature</h1>
+                    
+                    <span class="meta">
+                         作者 Brady joestar
+                        <span>
+                          日期 2017-07-02
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="post-title-haojen">
+        <span>
+            golang runtime与feature
+        </span>
+    </div>
 </header>
 
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <!-- archive list -->
-            
-				
-				
-				
-					
-					
-					<div class="archive archive-year" data-date="2017">
-						<h2 class="archive-title">
-						<span class="fa fa-archive">
-							<a href="/archives/2017">2017</a>
-						</span>
-						</h2>
-				
-				
-					
-					
-					<div class="archive archive-month" data-date="201707">
-						<h3 class="archive-title">
-							<a href="/archives/2017/07">07</a>
-						</h3>
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/02/golang-runtime/">
-                        <h4 class="post-title">
-                            golang runtime与feature
-                        </h4>
-                        
-                    </a>
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="golang"><a href="#golang" class="headerlink" title="golang"></a>golang</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>golang由于其能够支持大量并发运算的特性而广泛地应用于云计算领域。<br>本文对golang的底层进行一个简单的分析与说明。</p>
+<h2 id="golang-runtime"><a href="#golang-runtime" class="headerlink" title="golang runtime"></a>golang runtime</h2><p><img src="http://chuantu.biz/t5/123/1498995584x2728329095.png" alt="go程序架构图"></p>
+<p>如上所示是golang程序运行过程中的架构图。</p>
+<p>golang程序并没有像java一样自带虚拟机，而是和c类似。<br>每一个go程序都带有一个runtime，runtime负责和底层操作系统交互。</p>
+<p>一个go程序运行所经过的几个主要步骤：</p>
+<ul>
+<li>调用osinit,操作系统级别的初始化</li>
+<li>调用runtime·schedinit(获取程序运行参数、获取程序环境变量)</li>
+<li>调用runtime·mstart启动M（在runtime中定义的数据结构）</li>
+<li>调用runtime·main</li>
+</ul>
+<p>runtime实现比较复杂，在这里我们使用网上的一张图片<br><img src="http://chuantu.biz/t5/123/1498996094x2728329095.png" alt="runtime"><br>golang 是一门较为简单的语言，简单的语言并不代表不是优秀的语言。golang主要有三个feature。</p>
+<h2 id="协程（进程-线程）"><a href="#协程（进程-线程）" class="headerlink" title="协程（进程 线程）"></a>协程（进程 线程）</h2><p>进程：<br>进程是“程序执行的一个实例” ，担当分配系统资源的实体。进程创建必须分配一个完整的独立地址空间。</p>
+<p>进程切换只发生在内核态，</p>
+<p>线程：线程是进程的一个执行流，独立执行它自己的程序代码。</p>
+<p>协程：协程不是进程或线程，其执行过程更类似于子例程，或者说不带返回值的函数调用。</p>
+<p>在语言级别可以创建并发协程，然后编写代码去进行管理。go将这一步承包下来，使协程并发运行成本更低。</p>
+<h2 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h2><p> channel是Go语言在语言级别提供的goroutine间的通信方式。我们可以使用channel在两个或 多个goroutine之间传递消息。</p>
+<p> channel 会某种情况下出现阻塞，通过控制channel的阻塞来管理协程的并发与流程控制。</p>
+<h2 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h2><ul>
+<li><p>非侵入式接口。golang则采取了完全不同的设计理念，在Go语言中，一个类只需要实现了接口要求的所有函数，我们就说这个类实现了该接口</p>
+</li>
+<li><p>golang不支持完整的面向对象思想，它没有继承，多态则完全依赖接口实现。golang只能模拟继承，其本质是组合</p>
+</li>
+</ul>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/07/02/webserver/" data-toggle="tooltip" data-placement="top"
+                           title="webserver 架构阐述">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+
+                <!--加入新的评论系统-->
+                
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#golang"><span class="toc-text">golang</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#golang-runtime"><span class="toc-text">golang runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协程（进程-线程）"><span class="toc-text">协程（进程 线程）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#channel"><span class="toc-text">channel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#interface"><span class="toc-text">interface</span></a></li></ol></li></ol>
                 </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/02/webserver/">
-                        <h4 class="post-title">
-                            webserver 架构阐述
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-					
-					</div><!--month-->
-					
-					
-					<div class="archive archive-month" data-date="201706">
-						<h3 class="archive-title">
-							<a href="/archives/2017/06">06</a>
-						</h3>
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/23/golang_tcp/">
-                        <h4 class="post-title">
-                            golang 网络编程
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/20/hexo/">
-                        <h4 class="post-title">
-                            快速搭建个人博客网站
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/20/shadowsocks/">
-                        <h4 class="post-title">
-                            Shadowsocks原理
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/16/hello-world/">
-                        <h4 class="post-title">
-                            Hello World
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
+            </div>
         </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+
     </div>
-</div>
+</article>
+
+
+
+
+
+
 
 <!-- Footer -->
 <!-- Footer -->
