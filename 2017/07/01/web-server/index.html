@@ -166,7 +166,7 @@
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
                 <hr>
-<h2 id="webserver-架构阐述"><a href="#webserver-架构阐述" class="headerlink" title="webserver 架构阐述"></a>webserver 架构阐述</h2><h1 id="webserver-架构阐述-1"><a href="#webserver-架构阐述-1" class="headerlink" title="webserver 架构阐述"></a>webserver 架构阐述</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>web应用服务器是互联网时代最为重要之一的底层支持。它处理相应的应用访问请求，并为前端提供相应的展示数据。<br>不同的web应用服务器实现性能不同，大型网站服务器可以每秒处理几万到几十万的应用请求，中小型网站服务器可能会因为每秒几千次请求停机。<br>从架构的角度上而言，web-server的升级是一个迭代的过程，只有现在的应用服务器无法满足网站的访问量，才会在此之上进行优化。对于一名好的架构师而言，落地和防灾、可扩展是优先需要考虑的相关事宜。</p>
+<h2 id="title-webserver-架构阐述"><a href="#title-webserver-架构阐述" class="headerlink" title="title:webserver 架构阐述"></a>title:webserver 架构阐述</h2><h1 id="webserver-架构阐述"><a href="#webserver-架构阐述" class="headerlink" title="webserver 架构阐述"></a>webserver 架构阐述</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>web应用服务器是互联网时代最为重要之一的底层支持。它处理相应的应用访问请求，并为前端提供相应的展示数据。<br>不同的web应用服务器实现性能不同，大型网站服务器可以每秒处理几万到几十万的应用请求，中小型网站服务器可能会因为每秒几千次请求停机。<br>从架构的角度上而言，web-server的升级是一个迭代的过程，只有现在的应用服务器无法满足网站的访问量，才会在此之上进行优化。对于一名好的架构师而言，落地和防灾、可扩展是优先需要考虑的相关事宜。</p>
 <h2 id="web应用的开发"><a href="#web应用的开发" class="headerlink" title="web应用的开发"></a>web应用的开发</h2><p>首先要说的是软件开发是一个确定性的事件，<strong>有章可循，有理可溯</strong>，这是入门级程序员和高级程序员的区别之处。<br>我们以这种思路自顶向下去分析解决问题。</p>
 <p>以主流的JavaEE为例，传统的应用开发两个较为核心的工作内容是：</p>
 <ul>
@@ -207,6 +207,11 @@
 
                 <ul class="pager">
                     
+                    <li class="previous">
+                        <a href="/2017/07/01/jvm/" data-toggle="tooltip" data-placement="top"
+                           title="">&larr; Previous Post</a>
+                    </li>
+                    
                     
                     <li class="next">
                         <a href="/2017/06/23/golang_tcp/" data-toggle="tooltip" data-placement="top"
@@ -226,7 +231,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#webserver-架构阐述"><span class="toc-text">webserver 架构阐述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#webserver-架构阐述-1"><span class="toc-text">webserver 架构阐述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的开发"><span class="toc-text">web应用的开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的应用响应时间很慢，可能出现了什么问题"><span class="toc-text">我的应用响应时间很慢，可能出现了什么问题?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的部署"><span class="toc-text">web应用的部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单web应用服务器"><span class="toc-text">单web应用服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多web应用服务器"><span class="toc-text">多web应用服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的数据缓存"><span class="toc-text">web应用的数据缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多"><span class="toc-text">更多</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#title-webserver-架构阐述"><span class="toc-text">title:webserver 架构阐述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#webserver-架构阐述"><span class="toc-text">webserver 架构阐述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的开发"><span class="toc-text">web应用的开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的应用响应时间很慢，可能出现了什么问题"><span class="toc-text">我的应用响应时间很慢，可能出现了什么问题?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的部署"><span class="toc-text">web应用的部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单web应用服务器"><span class="toc-text">单web应用服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多web应用服务器"><span class="toc-text">多web应用服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web应用的数据缓存"><span class="toc-text">web应用的数据缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多"><span class="toc-text">更多</span></a></li></ol>
                 </div>
             </div>
         </div>
