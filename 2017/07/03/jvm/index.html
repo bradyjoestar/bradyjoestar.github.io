@@ -166,7 +166,7 @@
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
                 <h1 id="jvm-架构及优化"><a href="#jvm-架构及优化" class="headerlink" title="jvm 架构及优化"></a>jvm 架构及优化</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>先看一下知乎上一个有趣的问题：</p>
-<p>Java工程师面试的时候，总是提问一些jvm如何优化的问题，这些真的在开发中有用吗，工作七年了项目中从来没有用过，并且我获得过多次优秀员工，是否是面试人员故意刁难，望做过优化的大牛解答?</p>
+<p>Java工程师面试的时候，总是提问一些jvm如何优化的问题，这些真的在开发中有用吗，工作七年了项目中从来没有用过，并且我获得过多次优秀员工，望做过优化的大牛解答?</p>
 <p>答一：<br>JVM优化肯定是有用的，可能只是题主没有遇到过这方面的需求。比如一些GC机制会引起JVM的Stop The World，也就是所有工作线程都会停下来等待GC完成。对于一些对延迟比较敏感的程序来说，这一停顿达到一百甚至是几十毫秒的时候就是难以接受的。为了解决这类问题，就需要对JVM的参数做适当的调整。比如调整堆的大小，选择合适的垃圾回收器，控制对象晋升老年代的速度等等。</p>
 <p>作者：谢知恒</p>
 <p>链接：<a href="https://www.zhihu.com/question/40913700/answer/88862720" target="_blank" rel="external">https://www.zhihu.com/question/40913700/answer/88862720</a></p>
@@ -262,7 +262,7 @@
                     
                     <li class="previous">
                         <a href="/2017/07/03/tips/" data-toggle="tooltip" data-placement="top"
-                           title="">&larr; Previous Post</a>
+                           title="编程经验总结">&larr; Previous Post</a>
                     </li>
                     
                     
