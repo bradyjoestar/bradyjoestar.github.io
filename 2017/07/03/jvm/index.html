@@ -178,11 +178,92 @@
 <p>来源：知乎</p>
 <p>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <p>从上面两段回答中可以看出来，熟悉jvm架构和调优意义在于出了性能问题后，多给程序员留了一条退路。</p>
-<h2 id="jvm-架构"><a href="#jvm-架构" class="headerlink" title="jvm 架构"></a>jvm 架构</h2><h3 id="jvm-执行引擎"><a href="#jvm-执行引擎" class="headerlink" title="jvm 执行引擎"></a>jvm 执行引擎</h3><h3 id="jvm-内存"><a href="#jvm-内存" class="headerlink" title="jvm 内存"></a>jvm 内存</h3><h2 id="jvm调优"><a href="#jvm调优" class="headerlink" title="jvm调优"></a>jvm调优</h2><h3 id="GC机制简述"><a href="#GC机制简述" class="headerlink" title="GC机制简述"></a>GC机制简述</h3><h3 id="jvm调优简述与工具"><a href="#jvm调优简述与工具" class="headerlink" title="jvm调优简述与工具"></a>jvm调优简述与工具</h3>
+<h2 id="jvm-架构"><a href="#jvm-架构" class="headerlink" title="jvm 架构"></a>jvm 架构</h2><p><img src="http://chuantu.biz/t5/124/1499068227x2728329095.jpg" alt="jvm架构"></p>
+<p>首先先附上一张jvm架构图。<br>上图中主要由几个部分组成：</p>
+<ul>
+<li>类加载器（ClassLoader）:在JVM启动时或者在类运行时将需要的class加载到JVM中。每当运行一个<br>java 程序时，就会首先动态创建相应的jvm instance（<strong>启动三个程序，就会有三个jvm实例，这点和golang runtime非常类似</strong>），然后将该程序的所有类文件通过类加载器加载到jvm中。</li>
+<li>执行引擎：负责执行class文件中包含的字节码指令.执行引擎是java 虚拟机模拟运行的运算引擎，基本起到了翻译的作用。<br>有两种翻译的方式：<ul>
+<li>一句话一句话翻译。也就是解释执行。将程序计算器中指向的待执行的java字节码翻译为cpu可以运行的机器指令。</li>
+<li>一次性翻译。即编译执行。通过JIT(just in time)一次性将所有的字节码翻译完成。</li>
+</ul>
+</li>
+<li>内存区（也叫运行时数据区）：是在JVM运行的时候操作所分配的内存区。从上图中可以看出，主要分为五个部分。</li>
+<li>本地库接口，本地方法库：操作系统所有，用于处理jvm的native code和通过jit编译后的本地代码。<h3 id="jvm-执行引擎"><a href="#jvm-执行引擎" class="headerlink" title="jvm 执行引擎"></a>jvm 执行引擎</h3>关于jvm的执行引擎，它并不是真正软件模拟实现了cpu，最终所有计算机上的运算都是由cpu执行机器指令来处理。</li>
+</ul>
+<p><strong>有个问题？jvm执行引擎和本地代码关系如何？本地代码还需要过jvm执行引擎吗？</strong></p>
+<p>猜测答案：应该是需要过的，jvm封装了所有的代码，管理着程序执行的结果。</p>
+<p>关于执行引擎采用哪种方式来运行，经验如下：</p>
+<p>用JIT编译器来编译代码所花的时间要比用解释器去一条条解释执行花的时间要多。因此，如果代码只被执行一次的话，那么最好还是解释执行而不是编译后再执行。因此，内置了JIT编译器的JVM都会检查方法的执行频率，如果一个方法的执行频率超过一个特定的值的话，那么这个方法就会被编译成本地代码。</p>
+<h3 id="jvm-内存"><a href="#jvm-内存" class="headerlink" title="jvm 内存"></a>jvm 内存</h3><p>从jvm 架构可以看出，jvm内存主要分为五部分：</p>
+<ul>
+<li>方法区(Method Area)：用于存储类结构信息的地方，包括常量池、静态变量、构造函数等。虽然JVM规范把方法区描述为堆的一个逻辑部分， 但它却有个别名non-heap（非堆），所以大家不要搞混淆了。方法区还包含一个运行时常量池。</li>
+<li>java堆(Heap)：存储java实例或者对象的地方。这块是GC的主要区域。从存储的内容我们可以很容易知道，方法区和堆是被所有java线程共享的。</li>
+<li>java栈(Stack)：java栈总是和线程关联在一起，每当创建一个线程时，JVM就会为这个线程创建一个对应的java栈。在这个java栈中又会包含多个栈帧，每运行一个方法就创建一个栈帧，用于存储局部变量表、操作栈、方法返回值等。每一个方法从调用直至执行完成的过程，就对应一个栈帧在java栈中入栈到出栈的过程。所以java栈是现成私有的。</li>
+<li>程序计数器(PC Register)：用于保存当前线程执行的内存地址。由于JVM程序是多线程执行的（线程轮流切换），所以为了保证线程切换回来后，还能恢复到原先状态，就需要一个独立的计数器，记录之前中断的地方，可见程序计数器也是线程私有的。</li>
+<li>本地方法栈(Native Method Stack)：和java栈的作用差不多，只不过是为JVM使用到的native方法服务的。</li>
+</ul>
+<p>java 堆存放对象实例。<br>java 栈存放普通的变量及其它类型的信息。<br>这样的好处是对象通常占有内存很大，但个数少。栈里存放的东西个数多，占用内存少。对象是垃圾回收的主战场。<br>所以要分出栈和堆来。</p>
+<h2 id="jvm调优"><a href="#jvm调优" class="headerlink" title="jvm调优"></a>jvm调优</h2><p>传统的软件开发过程中不需要考虑到jvm调优的内容，主要出于以下的几点考虑：</p>
+<ul>
+<li>性能不是生命线。</li>
+<li>系统出问题后可以采取其它的方式进行处理，例如停机，停机后再恢复，受影响不大。</li>
+</ul>
+<p>而在互联网领域，上述两个问题就变为比较严重的问题。<br>为了留住用户，响应时间和吞吐量就会成为必须去解决的问题。而jvm性能瓶颈主要在与jvm自带的垃圾回收机制。</p>
+<h3 id="内存分配机制"><a href="#内存分配机制" class="headerlink" title="内存分配机制"></a>内存分配机制</h3><h4 id="静态内存-amp-动态内存"><a href="#静态内存-amp-动态内存" class="headerlink" title="静态内存&amp;动态内存"></a>静态内存&amp;动态内存</h4><p>Java的内存分配原理与C/C++不同，C/C++每次申请内存时都要malloc进行系统调用，而系统调用发生在内核空间，每次都要中断进行切换，这需要一定的开销，</p>
+<p>而Java虚拟机是先一次性分配一块较大的空间，然后每次new时都在该空间上进行分配和释放，减少了系统调用的次数，节省了一定的开销，这有点类似于内存池的概念；二是有了这块空间过后，如何进行分配和回收就跟GC机制有关了。</p>
+<p>java一般内存申请有两种：</p>
+<ul>
+<li>静态内存.编译时就能够确定的内存就是静态内存，即内存是固定的，系统一次性分配，比如int类型变量；java栈、程序计数器、本地方法栈都是线程私有的，线程生就生，线程灭就灭，栈中的栈帧随着方法的结束也会撤销，内存自然就跟着回收了。我们不需要管的。</li>
+<li>动态内存。动态内存分配就是在程序执行时才知道要分配的存储空间大小，比如java对象的内存空间。所以这几个区域的内存分配与回收是确定的，但是java堆和方法区则不一样，我们只有在程序运行期间才知道会创建哪些对象，所以这部分内存的分配和回收都是动态的。一般我们所说的垃圾回收也是针对的这一部分。</li>
+</ul>
+<p>总之Stack的内存管理是顺序分配的，而且定长，不存在内存回收问题；而Heap 则是为java对象的实例随机分配内存，不定长度，所以存在内存分配和回收的问题；</p>
+<h4 id="新生代-amp-老生代"><a href="#新生代-amp-老生代" class="headerlink" title="新生代&amp;老生代"></a>新生代&amp;老生代</h4><p>在 Java 中，堆被划分成两个不同的区域：</p>
+<ul>
+<li>新生代 ( Young )。 生命周期较短。</li>
+<li>老年代 ( Old )。生命周期较长。</li>
+<li>永久代。很少被讨论。</li>
+</ul>
+<p>新生代 ( Young ) 又被划分为三个区域：</p>
+<ul>
+<li>Eden</li>
+<li>From Survivor</li>
+<li>To Survivor。</li>
+</ul>
+<h3 id="GC机制简述"><a href="#GC机制简述" class="headerlink" title="GC机制简述"></a>GC机制简述</h3><p>JVM 使用的GC算法是什么？</p>
+<p>分代收集：即将内存分为几个区域，将不同生命周期的对象放在不同区域里。GC根据用途来说有以下三种：</p>
+<ul>
+<li><p>GC（或Minor GC）：收集 生命周期短的区域(Young area)。Minor GC会把Eden中的所有活的对象都移到Survivor区域中，如果Survivor区中放不下，那么剩下的活的对象就被移到Old generation 中。</p>
+</li>
+<li><p>Full GC （或Major GC）：基于标记-清除算法，收集生命周期短的区域(Young area)和生命周期比较长的区域(Old area)对整个堆进行垃圾收集。</p>
+</li>
+<li>Major GC ：清理永久代。</li>
+</ul>
+<p>GC 效率也会比较高，我们要尽量减少 Full GC 的次数。</p>
+<p>在minor Gc 与Full Gc执行机制上，都提供了三种选择：</p>
+<ul>
+<li>串行GC(SerialGC)</li>
+<li>并行回收GC(ParallelScavenge</li>
+<li>并行GC(ParNew)</li>
+</ul>
+<p>可以根据具体的需要选择相应的GC。</p>
+<p>GC的调整是在吞吐量和响应时间上做一个平衡。</p>
+<h3 id="jvm调优简述与工具"><a href="#jvm调优简述与工具" class="headerlink" title="jvm调优简述与工具"></a>jvm调优简述与工具</h3><p>怎样调优?<br>有何工具?<br>Jvm调优工具有以下几种：</p>
+<ul>
+<li>Jconsole : jdk自带，功能简单，但是可以在系统有一定负荷的情况下使用。对垃圾回收算法有很详细的跟踪。详细说明参考这里</li>
+<li>JProfiler：商业软件，需要付费。功能强大。详细说明参考这里</li>
+<li>VisualVM：JDK自带，功能强大，与JProfiler类似。推荐。</li>
+</ul>
+<p>关于调优这块在实际业务中碰到这类的问题再进行具体分析。</p>
+
                 <hr>
                 
 
                 <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2017/07/03/tips/" data-toggle="tooltip" data-placement="top"
+                           title="">&larr; Previous Post</a>
+                    </li>
                     
                     
                     <li class="next">
@@ -203,7 +284,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jvm-架构及优化"><span class="toc-text">jvm 架构及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm-架构"><span class="toc-text">jvm 架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm-执行引擎"><span class="toc-text">jvm 执行引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm-内存"><span class="toc-text">jvm 内存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm调优"><span class="toc-text">jvm调优</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GC机制简述"><span class="toc-text">GC机制简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm调优简述与工具"><span class="toc-text">jvm调优简述与工具</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jvm-架构及优化"><span class="toc-text">jvm 架构及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm-架构"><span class="toc-text">jvm 架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm-执行引擎"><span class="toc-text">jvm 执行引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm-内存"><span class="toc-text">jvm 内存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm调优"><span class="toc-text">jvm调优</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存分配机制"><span class="toc-text">内存分配机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#静态内存-amp-动态内存"><span class="toc-text">静态内存&动态内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#新生代-amp-老生代"><span class="toc-text">新生代&老生代</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GC机制简述"><span class="toc-text">GC机制简述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jvm调优简述与工具"><span class="toc-text">jvm调优简述与工具</span></a></li></ol></li></ol></li></ol>
                 </div>
             </div>
         </div>
