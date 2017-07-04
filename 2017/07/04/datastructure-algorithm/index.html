@@ -22,7 +22,7 @@
         
     </title>
 
-    <link rel="canonical" href="http://bradyjoestar.github.io/archives/2017/06/">
+    <link rel="canonical" href="http://bradyjoestar.github.io/2017/07/04/datastructure-algorithm/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -43,7 +43,7 @@
 <!-- hack iOS CSS :active style -->
 <body ontouchstart="" class="animated fadeIn">
 <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "false" data-istags="false
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
 " data-ishome = "false" >
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -115,204 +115,152 @@
 </script>
 
 <!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg">
+
+
 <style>
-    .intro-header .site-heading {
-        margin: 50px;
+    
+    header.intro-header {
+        background-image: url('http://upload2.inven.co.kr/upload/2016/01/23/bbs/m13157851073.jpg')
     }
+
+    
 </style>
 
-<!-- Page Header -->
 <header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading text-center">
-                    <h1>archives</h1>
-                    <span class="subheading">可以根据归档日期检索所有文件</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1></h1>
+                    
+                    <span class="meta">
+                         作者 Brady joestar
+                        <span>
+                          日期 2017-07-04
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="post-title-haojen">
+        <span>
+            
+        </span>
+    </div>
 </header>
 
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <!-- archive list -->
-            
-				
-				
-				
-					
-					
-					<div class="archive archive-year" data-date="2017">
-						<h2 class="archive-title">
-						<span class="fa fa-archive">
-							<a href="/archives/2017">2017</a>
-						</span>
-						</h2>
-				
-				
-					
-					
-					<div class="archive archive-month" data-date="201707">
-						<h3 class="archive-title">
-							<a href="/archives/2017/07">07</a>
-						</h3>
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/04/datastructure-algorithm/">
-                        <h4 class="post-title">
-                            Untitled
-                        </h4>
-                        
-                    </a>
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <p>数据结构与算法描述的是：</p>
+<h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h2><p>针对某些特定的数据结构，以及在这之上运行的具体的操作手段。</p>
+<p>现实问题可以转化为特定的数据结构的问题+某些数学问题，基于此可以使用相应的运算规则进行运算。</p>
+<h2 id="data-structure"><a href="#data-structure" class="headerlink" title="data-structure"></a>data-structure</h2><p>数据结构是一门研究非数值计算的程序设计问题中的操作对象，以及它们之间的关系和操作等相关问题的学科。</p>
+<p>程序设计中有时候也会处理一些数学问题。</p>
+<p>传统上，我们把数据结构分为逻辑结构和物理结构。</p>
+<h3 id="逻辑结构"><a href="#逻辑结构" class="headerlink" title="逻辑结构"></a>逻辑结构</h3><ul>
+<li>集合结构：集合结构中的数据元素同属于一个集合，他们之间是并列的关系，除此之外没有其他关系。</li>
+</ul>
+<p><img src="http://chuantu.biz/t5/125/1499141182x2728329095.jpg" alt="集合结构"></p>
+<ul>
+<li>线性结构：线性结构中的元素存在一对一的相互关系。</li>
+</ul>
+<p><img src="http://chuantu.biz/t5/125/1499141359x2728329095.jpg" alt="线性结构"></p>
+<ul>
+<li>树形结构：树形结构中的元素存在一对多的相互关系。</li>
+</ul>
+<p><img src="http://chuantu.biz/t5/125/1499141379x2728329095.jpg" alt="树形结构"></p>
+<ul>
+<li>图形结构：图形结构中的元素存在多对多的相互关系。</li>
+</ul>
+<p><img src="http://chuantu.biz/t5/125/1499141399x2728329095.jpg" alt="图形结构"></p>
+<h3 id="物理结构"><a href="#物理结构" class="headerlink" title="物理结构"></a>物理结构</h3><p>物理结构指指数据的逻辑结构在计算机存储空间的存放形式。数据在内存中的存储结构，也就是物理结构，分为两种：顺序存储结构和链式存储结构。</p>
+<ul>
+<li>顺序存储结构：是把数据元素存放在地址连续的存储单元里，其数据间的逻辑关系和物理关系是一致的。数组就是顺序存储结构的典型代表。其在内存中的存储形式类似于下图：</li>
+</ul>
+<p><img src="http://chuantu.biz/t5/125/1499141690x2728329095.jpg" alt="顺序存储结构"></p>
+<ul>
+<li>链式存储结构：是把数据元素存放在内存中的任意存储单元里，也就是可以把数据存放在内存的各个位置。这些数据在内存中的地址可以是连续的，也可以是不连续的。</li>
+</ul>
+<p><img src="http://chuantu.biz/t5/125/1499141712x2728329095.jpg" alt="链式存储结构"></p>
+<h2 id="algorithm"><a href="#algorithm" class="headerlink" title="algorithm"></a>algorithm</h2><h2 id="伪代码语法规则"><a href="#伪代码语法规则" class="headerlink" title="伪代码语法规则"></a>伪代码语法规则</h2><h2 id="套路"><a href="#套路" class="headerlink" title="套路"></a>套路</h2><h3 id="套路一"><a href="#套路一" class="headerlink" title="套路一"></a>套路一</h3><h3 id="套路二"><a href="#套路二" class="headerlink" title="套路二"></a>套路二</h3><h3 id="套路三"><a href="#套路三" class="headerlink" title="套路三"></a>套路三</h3><h3 id="套路四"><a href="#套路四" class="headerlink" title="套路四"></a>套路四</h3><h3 id="套路五"><a href="#套路五" class="headerlink" title="套路五"></a>套路五</h3><h3 id="套路六"><a href="#套路六" class="headerlink" title="套路六"></a>套路六</h3><h3 id="套路七"><a href="#套路七" class="headerlink" title="套路七"></a>套路七</h3><p>ps：图片来源参考自:鱼C工作室。感谢鱼C工作室贡献出了这么好的图片。</p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/07/03/tips/" data-toggle="tooltip" data-placement="top"
+                           title="编程经验总结">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+
+                <!--加入新的评论系统-->
+                
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#意义"><span class="toc-text">意义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#data-structure"><span class="toc-text">data-structure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#逻辑结构"><span class="toc-text">逻辑结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#物理结构"><span class="toc-text">物理结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#algorithm"><span class="toc-text">algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#伪代码语法规则"><span class="toc-text">伪代码语法规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#套路"><span class="toc-text">套路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#套路一"><span class="toc-text">套路一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路二"><span class="toc-text">套路二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路三"><span class="toc-text">套路三</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路四"><span class="toc-text">套路四</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路五"><span class="toc-text">套路五</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路六"><span class="toc-text">套路六</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路七"><span class="toc-text">套路七</span></a></li></ol></li></ol>
                 </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/03/tips/">
-                        <h4 class="post-title">
-                            编程经验总结
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/03/jvm/">
-                        <h4 class="post-title">
-                            jvm 架构及调优
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/02/golang-runtime/">
-                        <h4 class="post-title">
-                            golang runtime与feature
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/07/02/webserver/">
-                        <h4 class="post-title">
-                            webserver 架构阐述
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-					
-					</div><!--month-->
-					
-					
-					<div class="archive archive-month" data-date="201706">
-						<h3 class="archive-title">
-							<a href="/archives/2017/06">06</a>
-						</h3>
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/23/golang_tcp/">
-                        <h4 class="post-title">
-                            golang 网络编程
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/20/hexo/">
-                        <h4 class="post-title">
-                            快速搭建个人博客网站
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/20/shadowsocks/">
-                        <h4 class="post-title">
-                            Shadowsocks原理
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
-				
-				
-				
-				
-				<div class="one-tag-list">
-                <div class="post-preview">
-                    <a href="/2017/06/16/hello-world/">
-                        <h4 class="post-title">
-                            Hello World
-                        </h4>
-                        
-                    </a>
-                </div>
-				<hr>
-				</div>
-            
+            </div>
         </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+
     </div>
-</div>
+</article>
+
+
+
+
+
+
 
 <!-- Footer -->
 <!-- Footer -->
