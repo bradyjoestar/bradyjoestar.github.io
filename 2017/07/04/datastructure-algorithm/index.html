@@ -165,8 +165,9 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <h1 id="数据结构与算法"><a href="#数据结构与算法" class="headerlink" title="数据结构与算法"></a>数据结构与算法</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h2><p>针对某些特定的数据结构，以及在这之上运行的具体的操作手段。</p>
-<p>现实问题可以转化为特定的数据结构的问题+某些数学问题，基于此可以使用相应的运算规则进行运算。</p>
+                <h1 id="数据结构与算法"><a href="#数据结构与算法" class="headerlink" title="数据结构与算法"></a>数据结构与算法</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>算法究竟有什么用？<br>算法的意义是什么？</p>
+<p>算法的讨论主要涉及到性能，如何更快更好地计算出结果，转换数据，合理存储。很多时候不同数据结构和解决方法的选择，可能会造成数量级甚至指数级的差异。</p>
+<p>针对某些特定的数据结构，以及在这之上运行的具体的操作手段。现实问题可以转化为特定的数据结构的问题+某些数学问题，基于此可以使用相应的运算规则进行运算。</p>
 <h2 id="data-structure"><a href="#data-structure" class="headerlink" title="data-structure"></a>data-structure</h2><p>数据结构是一门研究非数值计算的程序设计问题中的操作对象，以及它们之间的关系和操作等相关问题的学科。</p>
 <p>程序设计中有时候也会处理一些数学问题。</p>
 <p>传统上，我们把数据结构分为逻辑结构和物理结构。</p>
@@ -195,7 +196,71 @@
 <li>链式存储结构：是把数据元素存放在内存中的任意存储单元里，也就是可以把数据存放在内存的各个位置。这些数据在内存中的地址可以是连续的，也可以是不连续的。</li>
 </ul>
 <p><img src="http://chuantu.biz/t5/125/1499141712x2728329095.jpg" alt="链式存储结构"></p>
-<h2 id="algorithm"><a href="#algorithm" class="headerlink" title="algorithm"></a>algorithm</h2><h2 id="伪代码语法规则"><a href="#伪代码语法规则" class="headerlink" title="伪代码语法规则"></a>伪代码语法规则</h2><p>伪代码是不标准的语言。我们可以将整个算法运行过程的结构用接近自然语言的形式（这里，你可以使用任何一种你熟悉的文字，中文，英文 等等，关键是你把你程序的意思表达出来）描述出来. 使用伪代码, 可以帮助我们更好的表述算法, 不用拘泥于具体的实现.</p>
+<h2 id="algorithm"><a href="#algorithm" class="headerlink" title="algorithm"></a>algorithm</h2><p>算法针对固定的数据结构。</p>
+<p>通常而言，常用的数据结构有以下几种：</p>
+<ul>
+<li>数组</li>
+<li>链表。单链表，双链表，循环链表。</li>
+<li>栈</li>
+<li>队列</li>
+<li>二叉树。主要就是二叉树，其次是二叉查找树，二叉线索树。二叉查找树，二叉线索树比较偏，用的时候再说。</li>
+<li>图。邻接矩阵，邻接表，十字链表，邻接多重表。其中最常用的是邻接矩阵，邻接表其次常见，十字链表，邻接多重表听听就好。<ul>
+<li>邻接矩阵：逻辑结构分为两部分：V和E集合。因此，用一个一维数组存放图中所有顶点数据；用一个二维数组存放顶点间关系（边或弧）的数据，<br>二维数组是行到列的距离。aij，i到j。（这个不用记，伪代码想怎么写就怎么写。）</li>
+</ul>
+</li>
+</ul>
+<p>围绕上面的数据结构，衍生出相应的算法。下面的算法很多使用了递归。</p>
+<ul>
+<li><p>查找：主要针对数组、链表。有很多种查找方法，但是常用的就以下两种，且第一种居多。<br>查找通常针对与已经排序号的序列，否则未排序的序列查找效率太低了。</p>
+<ul>
+<li>二分查找：二分查找的基本思想是将n个元素分成大致相等的两部分，取a[n/2]与x做比较，如果x=a[n/2],则找到x,算法中止；如果x<a[n 2],则只要在数组a的左半部分继续搜索x,如果x="">a[n/2],则只要在数组a的右半部搜索x.</a[n></li>
+<li>二叉查找树查找</li>
+</ul>
+</li>
+<li><p>排序：有以下几种常用的排序方法（可以快速编程实现的，无法快速编程实现的例如希尔排序、桶排序排除在外）：</p>
+<ul>
+<li>直接插入排序：将一个记录插入到已排序好的有序表中，从而得到一个新，记录数增1的有序表。即：先将序列的第1个记录看成是一个有序的子序列，然后从第2个记录逐个进行插入，直至整个序列有序为止。</li>
+<li>简单选择排序：在要排序的一组数中，选出最小（或者最大）的一个数与第1个位置的数交换；然后在剩下的数当中再找最小（或者最大）的与第2个位置的数交换，依次类推，直到第n-1个元素（倒数第二个数）和第n个元素（最后一个数）比较为止。</li>
+<li>冒泡排序（交换排序）：在要排序的一组数中，对当前还未排好序的范围内的全部数，自上而下对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒</li>
+<li>快速排序（交换排序）<ul>
+<li>选择一个基准元素,通常选择第一个元素或者最后一个元素</li>
+<li>通过一趟排序讲待排序的记录分割成独立的两部分，其中一部分记录的元素值均比基准元素值小。另一部分记录的 元素值比基准值大。</li>
+<li>此时基准元素在其排好序后的正确位置</li>
+<li>然后分别对这两部分记录用同样的方法继续进行排序，直到整个序列有序。</li>
+</ul>
+</li>
+<li>归并排序:归并（Merge）排序法是将两个（或两个以上）有序表合并成一个新的有序表，即把待排序序列分为若干个子序列，每个子序列是有序的。然后再把有序子序列合并为整体有序序列。</li>
+</ul>
+</li>
+<li><p>出栈入栈，出队入队的各种操作。了解栈和队列的出入顺序，面对题随机应变就好。</p>
+</li>
+<li><p>树的算法<br>  树的搜索有四种，主要分为前序、中序、后序和层次遍历，其中前序中序后序使用递归来进行非常简单，不使用递归的话可以使用栈来实现。</p>
+<ul>
+<li>前序遍历；  前序遍历按照“根结点-左孩子-右孩子”的顺序进行访问。</li>
+<li>中序遍历：  中序遍历按照“左孩子-根结点-右孩子”的顺序进行访问。</li>
+<li>后序遍历：  后序遍历按照“左孩子-右孩子-根结点”的顺序进行访问。</li>
+<li>层次遍历：  层次遍历需要借助与队列，按不同层次来逐一访问。</li>
+</ul>
+</li>
+<li><p>图的算法</p>
+<ul>
+<li>深度优先:深度优先搜索（DFS），可以被形象的描述为“打破沙锅问到底”，具体一点就是访问一个顶点之后，我继而访问它的下一个邻接的顶点，如此往复，直到当前顶点一被访问或者它不存在邻接的顶点。</li>
+<li>广度优先:广度优先搜索（BFS），可以被形象的描述为“浅尝辄止”，具体一点就是每个顶点只访问它的邻接节点（如果它的邻接节点没有被访问）并且记录这个邻接节点，当访问完它的邻接节点之后就结束这个顶点的访问。<br>广度优先用到了“先进先出”队列，通过这个队列来存储第一次发现的节点，以便下一次的处理；而对于再次发现的节点，我们不予理会——不放入队列</li>
+<li>拓扑排序:对一个有向无环图(Directed Acyclic Graph简称DAG)G进行拓扑排序，是将G中所有顶点排成一个线性序列，使得图中任意一对顶点u和v，若边(u,v)∈E(G)，则u在线性序列中出现在v之前。</li>
+<li>关键路径：关键路径通常(但并非总是)是决定项目工期的进度活动序列。它是项目中最长的路径，即使很小浮动也可能直接影响整个项目的最早完成时间。</li>
+<li>从某个源点到其余各顶点的最短路径：迪杰斯特拉算法，不做过多阐述。</li>
+<li><p>每一对顶点的最短路径：knuth -carl算法，不做过多阐述。</p>
+<p>图论虽然说了六种算法，但是它们使用的频繁度是不同的。</p>
+<p>深度优先和广度优先均需要标记是否节点是否别访问。</p>
+</li>
+</ul>
+</li>
+<li><p>动态规划：动态规划算法通常用于求解具有某种最优性质的问题。在这类问题中，可能会有许多可行解。每一个解都对应于一个值，我们希望找到具有最优值的解。动态规划算法与分治法类似，其基本思想也是将待求解问题分解成若干个子问题，先求解子问题，然后从这些子问题的解得到原问题的解。</p>
+</li>
+<li>贪心算法：贪心算法的基本思路是从问题的某一个初始解出发一步一步地进行，根据某个优化测度，每一步都要确保能获得局部最优解。</li>
+</ul>
+<p>动态规划和贪心算法掌握的多牛逼，做题中慢慢感受就行。</p>
+<h2 id="伪代码语法规则"><a href="#伪代码语法规则" class="headerlink" title="伪代码语法规则"></a>伪代码语法规则</h2><p>伪代码是不标准的语言。我们可以将整个算法运行过程的结构用接近自然语言的形式（这里，你可以使用任何一种你熟悉的文字，中文，英文 等等，关键是你把你程序的意思表达出来）描述出来. 使用伪代码, 可以帮助我们更好的表述算法, 不用拘泥于具体的实现.</p>
 <p>算法的伪代码描述形式上并不是非常严格，其主要特性和通常的规定如下：</p>
 <ul>
 <li>算法中出现的数组、变量可以是以下类型：整数、实数、字符、位串或指针。通常这些类型可以从算法的上下文来看是清楚的，并不需要额外加以说明。</li>
@@ -205,7 +270,13 @@
 <p>每个人都有自己的伪代码写法，多年之后只会记得伪代码怎么写。形成自己的伪代码风格，想怎么写就怎么写。</p>
 <p>除非要编译，否则看算法题首先考虑怎么用伪代码实现。</p>
 <p>过程：<strong>思路  —》   伪代码    –》 代码</strong>，可以按照这个过程来进行编程。</p>
-<h2 id="刷题常用套路"><a href="#刷题常用套路" class="headerlink" title="刷题常用套路"></a>刷题常用套路</h2><h3 id="套路一"><a href="#套路一" class="headerlink" title="套路一"></a>套路一</h3><h3 id="套路二"><a href="#套路二" class="headerlink" title="套路二"></a>套路二</h3><h3 id="套路三"><a href="#套路三" class="headerlink" title="套路三"></a>套路三</h3><h3 id="套路四"><a href="#套路四" class="headerlink" title="套路四"></a>套路四</h3><h3 id="套路五"><a href="#套路五" class="headerlink" title="套路五"></a>套路五</h3><h3 id="套路六"><a href="#套路六" class="headerlink" title="套路六"></a>套路六</h3><h3 id="套路七"><a href="#套路七" class="headerlink" title="套路七"></a>套路七</h3><p>ps：图片来源参考自:鱼C工作室。感谢鱼C工作室贡献出了这么好的图片。</p>
+<p>思路主要分为两个部分：</p>
+<ul>
+<li>数据结构的设计</li>
+<li>基于特定数据结构的运算过程</li>
+</ul>
+<h2 id="刷题常用套路"><a href="#刷题常用套路" class="headerlink" title="刷题常用套路"></a>刷题常用套路</h2><p><strong>刷题过程中记录的套路，动态更新中</strong>。</p>
+<h3 id="套路一"><a href="#套路一" class="headerlink" title="套路一"></a>套路一</h3><h3 id="套路二"><a href="#套路二" class="headerlink" title="套路二"></a>套路二</h3><h3 id="套路三"><a href="#套路三" class="headerlink" title="套路三"></a>套路三</h3><h3 id="套路四"><a href="#套路四" class="headerlink" title="套路四"></a>套路四</h3><h3 id="套路五"><a href="#套路五" class="headerlink" title="套路五"></a>套路五</h3><h3 id="套路六"><a href="#套路六" class="headerlink" title="套路六"></a>套路六</h3><h3 id="套路七"><a href="#套路七" class="headerlink" title="套路七"></a>套路七</h3><h3 id="套路…"><a href="#套路…" class="headerlink" title="套路…"></a>套路…</h3><p>ps：图片来源参考自:鱼C工作室。感谢鱼C工作室贡献出了这么好的图片。</p>
 
                 <hr>
                 
@@ -236,7 +307,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数据结构与算法"><span class="toc-text">数据结构与算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#意义"><span class="toc-text">意义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#data-structure"><span class="toc-text">data-structure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#逻辑结构"><span class="toc-text">逻辑结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#物理结构"><span class="toc-text">物理结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#algorithm"><span class="toc-text">algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#伪代码语法规则"><span class="toc-text">伪代码语法规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#刷题常用套路"><span class="toc-text">刷题常用套路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#套路一"><span class="toc-text">套路一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路二"><span class="toc-text">套路二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路三"><span class="toc-text">套路三</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路四"><span class="toc-text">套路四</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路五"><span class="toc-text">套路五</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路六"><span class="toc-text">套路六</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路七"><span class="toc-text">套路七</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数据结构与算法"><span class="toc-text">数据结构与算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#data-structure"><span class="toc-text">data-structure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#逻辑结构"><span class="toc-text">逻辑结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#物理结构"><span class="toc-text">物理结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#algorithm"><span class="toc-text">algorithm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#伪代码语法规则"><span class="toc-text">伪代码语法规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#刷题常用套路"><span class="toc-text">刷题常用套路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#套路一"><span class="toc-text">套路一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路二"><span class="toc-text">套路二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路三"><span class="toc-text">套路三</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路四"><span class="toc-text">套路四</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路五"><span class="toc-text">套路五</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路六"><span class="toc-text">套路六</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路七"><span class="toc-text">套路七</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#套路…"><span class="toc-text">套路…</span></a></li></ol></li></ol></li></ol>
                 </div>
             </div>
         </div>
