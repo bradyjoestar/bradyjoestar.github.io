@@ -243,3 +243,37 @@ func (privKey PrivKeySecp256k1) Sign(msg []byte) ([]byte, error) {
 	return sigBytes, nil
 }
 ```
+
+
+```
+type Transaction struct {
+    data txdata
+    hash atomic.Value
+    size atomic.Value
+
+    //account := accounts.Account{Address: args.From}
+    from atomic.Value
+}
+
+type txdata struct {
+    AccountNonce uint64          `json:"nonce"    gencodec:"required"`
+    //交易的Gas价格
+    Price        *big.Int        `json:"gasPrice" gencodec:"required"`
+    //交易允许消耗的最大Gas
+    GasLimit     uint64          `json:"gas"      gencodec:"required"`
+    //交易接收者地址
+    Recipient    *common.Address `json:"to"       rlp:"nil"` 
+    Amount       *big.Int        `json:"value"    gencodec:"required"`
+    Payload      []byte          `json:"input"    gencodec:"required"`
+
+    // Signature values
+    // 交易相关签名数据
+    V *big.Int `json:"v" gencodec:"required"`
+    R *big.Int `json:"r" gencodec:"required"`
+    S *big.Int `json:"s" gencodec:"required"`
+
+    // This is only used when marshaling to JSON.
+    //交易Hash
+    Hash *common.Hash `json:"hash" rlp:"-"`
+}
+```
